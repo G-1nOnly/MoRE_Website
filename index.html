@@ -150,14 +150,17 @@
   </section>
 
   <!-- Paper video. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Video (Coming Soon)</h2>
-        <!-- <video id="video" controls playsinline height="100%">
-          <source src="./static/videos/video.mp4" type="video/mp4">
-        </video> -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="content has-text-centered">
+      `<h2 class="title is-3">Video</h2>
+          <video id="teaser" controls playsinline height="100%">
+            <source src="./static/videos/video.mp4" type="video/mp4">
+          </video>
+        </div>
       </div>
     </div>
+  </section>
   <!--/ Paper video. -->
 
 
@@ -168,7 +171,6 @@
 <section class="hero is-light">
   <div class="container is-max-desktop" style="width: 100%;">
     <h2 class="title is-3" style="margin-top: 1em;">Results (In Progress)</h2>
-
     <div class="tips-wrapper" style="position: relative; margin-bottom: 0.1em;">
       <div class="tips-icon">💡Tips</div>
       <div class="tips-text">
@@ -186,13 +188,13 @@
     <!-- Thumbnails: click to load a .ply -->
     <div id="plyThumbs" class="selection-panel">
       <!-- Replace the src and data-ply paths with your actual thumbnails and PLY files -->
-      <img class="selectable-image selected" src="./static/gallery/outdoor_multiview/image.jpg" data-ply="./static/gallery/outdoor_multiview/mesh.ply" alt="outdoor_multiview">
-      <img class="selectable-image" src="./static/gallery/indoor_multiview/image.jpg" data-ply="./static/gallery/indoor_multiview/mesh.ply" alt="indoor_multiview">
-      <img class="selectable-image" src="./static/gallery/object_multiview/image.jpg" data-ply="./static/gallery/object_multiview/mesh.ply" alt="object_multiview">
-      <img class="selectable-image" src="./static/gallery/greatwall/image.jpg" data-ply="./static/gallery/greatwall/mesh.ply" alt="greatwall">
-      <img class="selectable-image" src="./static/gallery/indoor_mono/image.jpg" data-ply="./static/gallery/indoor_mono/mesh.ply" alt="indoor_mono">
-      <img class="selectable-image" src="./static/gallery/basket_mono/image.jpg" data-ply="./static/gallery/basket_mono/mesh.ply" alt="basket_mono">
-      <img class="selectable-image" src="./static/gallery/path_mono/image.jpg" data-ply="./static/gallery/path_mono/mesh.ply" alt="path_mono">
+      <img class="selectable-image selected" src="./static/gallery/outdoor_multiview/image.jpg" data-ply="outdoor.ply" alt="outdoor_multiview">
+      <img class="selectable-image" src="./static/gallery/indoor_multiview/image.jpg" data-ply="indoor_multiview.ply" alt="indoor_multiview">
+      <img class="selectable-image" src="./static/gallery/object/image.jpg" data-ply="object.ply" alt="object">
+      <img class="selectable-image" src="./static/gallery/greatwall/image.jpg" data-ply="greatwall.ply" alt="greatwall">
+      <img class="selectable-image" src="./static/gallery/indoor_mono/image.jpg" data-ply="indoor_mono.ply" alt="indoor_mono">
+      <img class="selectable-image" src="./static/gallery/basket_mono/image.jpg" data-ply="basket.ply" alt="basket_mono">
+      <img class="selectable-image" src="./static/gallery/path_mono/image.jpg" data-ply="path.ply" alt="path_mono">
     </div>
 
   </div>
@@ -246,20 +248,40 @@ function init() {
 
   window.addEventListener('resize', onWindowResize);
 
+  // // Click thumbnails to load PLY
+  // thumbs.forEach(img => {
+  //   img.addEventListener('click', () => {
+  //     thumbs.forEach(t => t.classList.remove('selected'));
+  //     img.classList.add('selected');
+  //     const plyPath = img.getAttribute('data-ply');
+  //     if (plyPath) loadPLY(plyPath);
+  //   });
+  // });
+
+  // load PLY from hf dataset
+  const BASE_URL = "https://huggingface.co/datasets/G1nOnly/MoRE_Website_Mesh/resolve/main/"; 
+
   // Click thumbnails to load PLY
   thumbs.forEach(img => {
     img.addEventListener('click', () => {
       thumbs.forEach(t => t.classList.remove('selected'));
       img.classList.add('selected');
-      const plyPath = img.getAttribute('data-ply');
-      if (plyPath) loadPLY(plyPath);
+      
+      const fileName = img.getAttribute('data-ply');
+      if (fileName) {
+        const fullUrl = BASE_URL + fileName; 
+        
+        console.log("Loading: ", fullUrl); 
+        loadPLY(fullUrl); 
+      }
     });
   });
 
   // Default: load first thumbnail if present
   const first = document.querySelector('#plyThumbs .selectable-image');
   if (first && first.getAttribute('data-ply')) {
-    loadPLY(first.getAttribute('data-ply'));
+    // loadPLY(first.getAttribute('data-ply'));
+    loadPLY(BASE_URL + first.getAttribute('data-ply'));
   }
 
   // Local file selection
